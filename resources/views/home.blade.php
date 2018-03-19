@@ -12,11 +12,17 @@
                         <div class="alert alert-success">
                             {{ session('status') }}
                         </div>
-                    @endif
-
-                    You are logged in!
+                    @endif 
+                  
+                    @auth
+                         <div class="content">
+                             <div class="title m-b-md">
+                                Ações <br>
+                                 <a href="{{ url('/home') }}">Adicionar ação</a>  
+                           </div>
+                    @endauth
                 </div>
-            </div>
+              </div>
         </div>
     </div>
 </div>
