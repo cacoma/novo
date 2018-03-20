@@ -15,7 +15,10 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('example-component', require('./components/ExampleComponent.vue'));
+// Vue.component('example', require('./components/Example.vue'));
+//Vue.component('userlist', require('./components/UserList.vue'));
+// Vue.component('autocomplete',require('./components/Autocomplete.vue'));
+//Vue.component('autocompletecities',require('./components/Autocompletecities.vue')); versao antiga
 
 const app = new Vue({
     el: '#app'

@@ -1,0 +1,16 @@
+{
+  "uploadOnSave": true,
+  "useAtomicWrites": true,
+  "deleteLocal": true,
+  "hostname": "cacoma.tk",
+  "port": "21",
+  "target": "/var/www/html",
+  "ignore": [
+    ".remote-sync.json",
+    ".git/**"
+  ],
+  "username": "ubuntu",
+  "keyfile": "/home/luke/bin/cacoma.pem",
+  "watch": [],
+  "transport": "scp"
+}

@@ -16,9 +16,14 @@
                   
                     @auth
                          <div class="content">
-                             <div class="title m-b-md">
-                                Ações <br>
-                                 <a href="{{ url('/home') }}">Adicionar ação</a>  
+                           <div class="title m-b-md">
+                              Ações
+                               <li><a href="{{ url('/stocks/create') }}">Adicionar ação</a></li>
+                             <li><a href="{{ url('/stocks') }}">Listar ações</a></li>
+                           </div>
+                           <div class="title m-b-md">
+                                Usuarios:
+                                <li><a href="{{ route('users.index') }}">Index</a></li>
                            </div>
                     @endauth
                 </div>
