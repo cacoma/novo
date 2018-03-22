@@ -9,7 +9,9 @@
       </div><br />
      @endif
     <!-- <meta name="content" content="{{ csrf_token() }}"> -->
-
+    
+    <a href="{{action('StockController@create')}}" class="btn btn-success pull-right">Adicionar acoes</a>
+ 
   <table class="table table-striped">
     <thead>
       <tr>

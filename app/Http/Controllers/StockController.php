@@ -28,7 +28,7 @@ class StockController extends Controller
      */
     public function create()
     {
-        ////implementar
+        ////
       return view('stocks.create'); 
     }
 
@@ -73,7 +73,7 @@ class StockController extends Controller
      */
     public function edit($id)
     {
-        //implementar
+        //
         $stock = Stock::find($id);
         return view('stocks.edit',compact('stock','id'));
     }
@@ -87,7 +87,9 @@ class StockController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //implementar
+        //
+			$user = Auth::user();
+			if ($user->role_id == '1'){
       $stockUpdate = Stock::find($id);
 			$this->validate(request(), [
 						'symbol' => 'required|string|max:255',
@@ -97,6 +99,9 @@ class StockController extends Controller
 	        $stockUpdate->type = strtoupper($request->get('type'));
 	        $stockUpdate->save();
 	         return back()->with('success','Acao atualizada');
+				}else{
+				return back()->with('error','Acao nao atualizada!');
+		    }
 			//admin somente podem alterar -->implementar
 		  //$user = Auth::user();
 		  
@@ -126,7 +131,7 @@ class StockController extends Controller
      */
     public function destroy($id)
     {
-        //implementar
+        //
        $stockDel = Stock::find($id);
        $stockDel->delete();
 			 return back()->with('success', 'A ação foi deletada.');

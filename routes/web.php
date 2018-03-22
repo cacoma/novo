@@ -21,4 +21,5 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::resource('stocks', 'StockController');
 Route::resource('users', 'UserController');
+Route::resource('invests', 'InvestController');
 

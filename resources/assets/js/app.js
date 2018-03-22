@@ -15,7 +15,8 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-// Vue.component('example', require('./components/Example.vue'));
+Vue.component('createinvests', require('./components/CreateInvests.vue'));
+Vue.component('createinveststypestocks', require('./components/createInvests/typeStocks.vue'));
 //Vue.component('userlist', require('./components/UserList.vue'));
 // Vue.component('autocomplete',require('./components/Autocomplete.vue'));
 //Vue.component('autocompletecities',require('./components/Autocompletecities.vue')); versao antiga

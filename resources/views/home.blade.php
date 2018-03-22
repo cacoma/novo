@@ -24,6 +24,11 @@
                            <div class="title m-b-md">
                                 Usuarios:
                                 <li><a href="{{ route('users.index') }}">Index</a></li>
+                           </div> 
+                           <div class="title m-b-md">
+                                Invests:
+                                <li><a href="{{ route('invests.index') }}">Index</a></li>
+                                <li><a href="{{ route('invests.create') }}">Criar</a></li>
                            </div>
                     @endauth
                 </div>
