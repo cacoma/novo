@@ -15,8 +15,9 @@ return [
     |            "sparkpost", "log", "array"
     |
     */
-
-    'driver' => env('MAIL_DRIVER', 'smtp'),
+    // alterado por rafael 29mar18
+    //'driver' => env('MAIL_DRIVER', 'smtp'),
+    'driver' => env('MAIL_DRIVER', 'ses'),
 
     /*
     |--------------------------------------------------------------------------
@@ -28,8 +29,9 @@ return [
     | the Mailgun mail service which will provide reliable deliveries.
     |
     */
-
-    'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
+    // alterado por rafael em  29mar18
+    //'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
+    'host' => env('MAIL_HOST', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -54,11 +56,15 @@ return [
     | used globally for all e-mails that are sent by your application.
     |
     */
-
+      //alterado po rafael em 29mar18
+//     'from' => [
+//         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+//         'name' => env('MAIL_FROM_NAME', 'Example'),
+//    ],
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
-    ],
+        'address' => env('MAIL_FROM_ADDRESS', 'admin@cacoma.tk'),
+        'name' => env('MAIL_FROM_NAME', 'Cacoma Administrator'),
+      ],
 
     /*
     |--------------------------------------------------------------------------

@@ -10,44 +10,46 @@
                 <option value="B">Nao usar</option>
                 <option value="C">Nao usar tambem</option>
               </select>
-
+     
+              </div>
             </div>
-            </div>
+       </form>
             
             <createinveststypestocks v-if="type === 'A'">
                 
             </createinveststypestocks>
             <template v-else-if="type === 'B'">
+            <form method="post" action="">
             <div class="form-row">
               <div class="form-group col-md-12">
                           <label class="control-label col-md-6" for="nu">Nao usar</label>
                           <input type="text" class="form-control col-md-6" name="nu" disabled>
                         </div>
             </div>
+            </form>
             </template>
             <template v-else-if="type === 'C'">
+              <form method="post" action="">
               <div class="form-row">
               <div class="form-group col-md-12">
                  <label class="control-label col-md-6" for="nut">Nao usar tambem</label>
                           <input type="text" class="form-control col-md-6" name="nut" disabled>
                           </div> 
               </div>
+              </form>
             </template>           
             <template v-else>
+              <form method="post" action="">
               <div class="form-row">
               <div class="form-group col-md-12" >
               <label class="control-label col-md-6">Selecione uma opção acima.</label>
               </div>
               </div>
+              </form>
             </template>
-       <div class="form-group">
-         <div class="form-row col-md-12">
-         <label class="control-label col-md-4"></label>
-           <button type="submit" class="btn btn-success form-control">Adicionar</button>
-        </div>
-        </div>
 
-       </form>
+
+      
      </div> 
   </template>
   <script>
@@ -58,9 +60,5 @@
             errors: []
             }
           },
-        mounted() {
-            console.log('Component mounted.')
-        },
-        
     }
 </script>

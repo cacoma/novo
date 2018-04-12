@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\invest;
+use App\users;
+use App\monthlyQuotes;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class InvestController extends Controller
 {
@@ -12,18 +17,98 @@ class InvestController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+		//se usuario estiver registrado, pode visualizar, caso nao, redirecionado para tela de login
+			public function __construct()
+		{
+				$this->middleware('auth');
+		}
+
     public function index()
     {
-      //implementar
-      $user = Auth::user();
-        if ($user->role_id == '1'){
-            $invests = Invest::with('user')->get();
-            return view('invests.index')->withinvests($invests);
-        } else {
-          $invests = Invest::where('user_id', $user->id )->get();
-          return view('invests.index', compact('invests'));
-        }
+      //versão com paginação e mostrando tudo usando blade do laravel
+//       $user = Auth::user();
+//         if ($user->role_id == '1'){
+//             $invests = Invest::with('user')->paginate(10);
+//             return view('invests.index', compact('invests','user'));
+//         } else {
+//           $invests = Invest::where('user_id', $user->id )->paginate(10);
+//           return view('invests.index', compact('invests','user'));
+//         }
+		$user = Auth::user();
+		if ($user->role_id == '1'){
+			$invests = Invest::with(['monthlyQuotes' => function ($query) {
+										$query->whereDate('timestamp', '>', Carbon::now()->subMonth(2))->latest();
+								}, 'broker'])->get();
+
+ 				//$invests = DB::table('invests')->get();
+//  				$invests = Invest::with(['monthlyQuotes' => function ($query) {
+// 										$query->latest();
+// 								}])->get();
+				//return response($invests);
+// 				$symbols = array();
+	 				foreach ($invests as $key => $value) {
+// 					//ajusta nome do broker
+// 	        $value->brokerName = $value->broker->name;
+// 					//ajusta se a cotacao for menor ou maior que o price a forma da célula
+	 					$value->quote = $value->monthlyQuotes[0]->close;
+							if ($value->price > $value->quote) {
+								 $field = array('price' => 'success');
+								 $value->_cellVariants = (object) array_merge((array)$value->_cellVariants, (array)$field);
+// 									$value->class =  array( 'background-color' => 'red');
+// 							} else{
+// 								$value->class =  array( 'background-color' => 'green');// 									
+// 								$value->class =  "bg-success";
+ 									} else{
+									$field = array('price' => 'warning');
+									 $value->_cellVariants = (object) array_merge((array)$value->_cellVariants, (array)$field);
+//  								$value->class =  "bg-warning";
+								
+// // 					if(!in_array($value->symbol,$symbols,true)) {
+// // 							$symbols[$value->type] = $value->symbol;
+	 					}
+
+ 				}
+// 				$symbols = array_reduce((array)$invests, function ($acc, $inv) {
+//         	$acc['symbols'] == $acc['symbols'] || [];
+// 					array_push($acc['symbols'], $inv);
+//           return $acc;
+//         });
+// 				var_dump((array)$invests);
+// 				echo "\n\n get_object_vars:\n";
+//  				$symbolsobj =  get_object_vars($invests);
+// 				var_dump($symbolsobj);
+// 				echo "\n\narray keys:\n";
+//  				$symbols = array_keys((array)$invests);
+//	 				var_dump($symbols);
+// 				echo "\n\narray column:\n";
+// 				$symbolsIndex = array_column((array)$invests, 'symbols', 'symbols');
+// 				var_dump($symbolsIndex);
+				//return view('invests.index')->with('invests', $invests)->with('symbols', $symbols)->with('symbolsIndex', $symbolsIndex);
+				return view('invests.index')->with('invests', $invests);
+				//return view('invests.index')->with('invests', $invests);
+
+		}else {
+				//essa query abaixo busca dados da tabela dos investimentos e das cotas mensais de cada ativo, e relaciona as duas.
+				//depois ele puxa somente os registros que o timestamp, que eh a data real do fechamento, e puxa somente dos ultimos dois meses e a ultima por primeiro.
+				//isso se faz para caso nao tenha sido inserido o valor neste mes ainda
+				//alem desse relacionamento ele traz somente os investimentos que o id é o do usuario registrado
+				$invests = Invest::with(['monthlyQuotes' => function ($query) {
+										$query->whereDate('timestamp', '>', Carbon::now()->subMonth(2))->latest();
+								}, 'broker'])->where('user_id',$user->id)->get();
+			
+				foreach ($invests as $key => $value) {
+					$value->quote = $value->monthlyQuotes[0]->close;
+							if ($value->price > $value->quote) {
+								$value->win = "bg-danger";
+							} else{
+								$value->win = "bg-success";
+							}
+				}
+			return view('invests.index')->with('invests', $invests);
+
     }
+		}
 
     /**
      * Show the form for creating a new resource.
@@ -33,7 +118,7 @@ class InvestController extends Controller
     public function create()
     {
         //implementar
-       return view('invests.create');
+        return view('invests.create');
     }
 
     /**
@@ -44,16 +129,9 @@ class InvestController extends Controller
      */
     public function store(Request $request)
     {
-        //implementar, campos ainda não definidos
-        $invests = $this->validate(request(), [
-						'symbol' => 'required|string|max:255',
-						'type' => 'required|string|max:255',
-					]);
-       Stock::create([
-            'symbol' => strtoupper($invests['symbol']),
-				 		'type' => strtoupper($invests['type']),
-            ]);
-       return back()->with('success', 'O investimento foi adicionado.');
+        //criacao de investimentos vai ser pelo controlador de cada tipo de investimento,
+				//afim de dissipar o codigo para os pontos relevantes
+
     }
 
     /**
@@ -65,9 +143,9 @@ class InvestController extends Controller
     public function show($id)
     {
         //implementar,
-      $invest = invest::find($id);
-      return view('invests.show', array('invest' => $invest));
-      
+      $invest = invest::findOrFail($id);
+      return $invest;
+
     }
 
     /**
@@ -78,11 +156,10 @@ class InvestController extends Controller
      */
     public function edit($id)
     {
-        //implementar
-       $invest = Invest::find($id);
-        return view('invests.edit',compact('invest','id'));
-    }
+ 				//edicao de investimentos vai ser pelo controlador de cada tipo de investimento,
+				//afim de dissipar o codigo para os pontos relevantes
 
+		}
     /**
      * Update the specified resource in storage.
      *
@@ -92,22 +169,9 @@ class InvestController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //implementar
-      	$invest = Invest::find($id);
-				$user = Auth::user();
-				//dono e admin somente podem alterar
-				if ($user->id == $invest->user_id || $user->role_id == '1'){
-					$this->validate(request(), [
-						'name' => 'required|string|max:255',
-						'type' => 'required|string|max:255',
-						]);
-	        $invest->name = $request->get('name');
-	        $invest->type = $request->get('type');
-	        $invest->save();
-	        return redirect('invests')->with('success','Invest atualizado');
-				}else{
-					return back()->with('error', 'O invest nao pode ser adicionado');
-				}
+         //update de investimentos vai ser pelo controlador de cada tipo de investimento,
+				//afim de dissipar o codigo para os pontos relevantes
+
     }
 
     /**
@@ -118,7 +182,7 @@ class InvestController extends Controller
      */
     public function destroy($id)
     {
-        //implementar
+        //ainda não decidido se a exclusao do investimento eh por este controller ou pelo controller apropriado
       $invest = Invest::find($id);
 			$user = Auth::user();
 				//dono e admin somente podem alterar
@@ -126,7 +190,39 @@ class InvestController extends Controller
        			$invest->delete();
        			return redirect('invests')->with('success','Invest deletado');
 		 		}else {
-		 				return back()->with('error', 'O invest nao pode ser adicionado');
+		 				return back()->with('error', 'O invest nao pode ser deletado');
 		 		}
     }
+
+		public function indexinvests()
+    {
+			 $user = Auth::user();
+		if ($user->role_id == '1'){
+			$invests = Invest::with(['monthlyQuotes' => function ($query) {
+										$query->whereDate('timestamp', '>', Carbon::now()->subMonth(2))->latest();
+								}, 'broker'])->get();
+
+ 				//$invests = DB::table('invests')->get();
+//  				$invests = Invest::with(['monthlyQuotes' => function ($query) {
+// 										$query->latest();
+// 								}])->get();
+ 				//$invests->lastMonthlyQuote->last();
+ 				//$invests
+				//return response()->json($invests);
+				//return response($invests);
+				return \Response::json($invests);
+
+		}else {
+				//$invests = DB::table('invests')->where('user_id',$user->id)->get();
+				//$date = Carbon::now()->subMonth();
+				//essa query abaixo busca dados da tabela dos investimentos e das cotas mensais de cada ativo, e relaciona as duas.
+				//depois ele puxa somente os registros que o timestamp, que eh a data real do fechamento, e puxa somente dos ultimos dois meses e a ultima por primeiro.
+				//isso se faz para caso nao tenha sido inserido o valor neste mes ainda
+				//alem desse relacionamento ele traz somente os investimentos que o id é o do usuario registrado
+				$invests = Invest::with(['monthlyQuotes' => function ($query) {
+										$query->whereDate('timestamp', '>', Carbon::now()->subMonth(2))->latest();
+								}])->where('user_id',$user->id)->get();
+				return \Response::json($invests);
+		}
+	}
 }

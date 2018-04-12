@@ -1,20 +1,54 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
+                 <br />
                 <div class="panel-heading">Dashboard</div>
 
                 <div class="panel-body">
-                    @if (session('status'))
-                        <div class="alert alert-success">
-                            {{ session('status') }}
-                        </div>
-                    @endif 
+
                   
                     @auth
+<!--                     @if (session()->has('success'))
+                      <div class="alert alert-success">
+                        <p>{{ session('success') }}</p>
+                      </div><br />
+                     @endif
+                     @if (session()->has('errors'))
+                       <div class="help-block">
+                         <p>{{ session('errors') }}</p>
+                       </div><br />
+                      @endif
+                  @if (session()->has('status'))
+                      <div class="alert alert-info">
+                          {{ session('status') }}
+                      </div>
+                  @endif -->
+                 @if (\Session::has('success'))
+                      <div class="alert alert-success">
+                        <p>{{ \Session::get('success') }}</p>
+                      </div>
+                     @endif
+                     @if (\Session::has('error'))
+                       <div class="alert alert-danger">
+                         <p>{{ \Session::get('error') }}</p>
+                       </div>
+                      @endif
+                  @if (\Session::has('status'))
+                       <div class="alert alert-info">
+                         <p>{{ \Session::get('status') }}</p>
+                       </div>
+                      @endif
+                                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                  
                          <div class="content">
                            <div class="title m-b-md">
                               Ações
@@ -30,10 +64,9 @@
                                 <li><a href="{{ route('invests.index') }}">Index</a></li>
                                 <li><a href="{{ route('invests.create') }}">Criar</a></li>
                            </div>
+                           </div>
                     @endauth
-                </div>
+
               </div>
-        </div>
     </div>
-</div>
 @endsection

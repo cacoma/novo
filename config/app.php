@@ -13,7 +13,8 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Cacoma'), //alterado rafael 27032018
+    //'name' => env('APP_NAME', 'Laravel'), //alterado rafael 27032018
 
     /*
     |--------------------------------------------------------------------------
@@ -39,7 +40,8 @@ return [
     |
     */
 
-    'debug' => env('APP_DEBUG', false),
+    'debug' => env('APP_DEBUG', true), //alterado rafael 27032018
+    //'debug' => env('APP_DEBUG', true), //alterado rafael 27032018
 
     /*
     |--------------------------------------------------------------------------
@@ -79,7 +81,8 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'pt-BR', //alterado rafael 27032018 
+    //'locale' => 'en',
 
     /*
     |--------------------------------------------------------------------------

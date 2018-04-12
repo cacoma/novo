@@ -40,7 +40,8 @@ class UserController extends Controller
     public function create()
     {
         //
-        return view('users.create');
+       // return view('users.create');
+			return redirect('users')->with('errors','Usuarios devem ser criados pela pagina principal.');
     }
     /**
      * Store a newly created resource in storage.
@@ -51,17 +52,17 @@ class UserController extends Controller
     public function store(Request $request)
     {
         //
-        return User::create([
-            'name' => $data['name'],
-            'password' => bcrypt($data['password']),
-            'lastname' => $data['lastname'],
-            'sex' => $data['sex'],
-            'etnia' => $data['etnia'],
-            'cidade' => $data['cidade'],
-            'uf' => $data['uf'],
-            'pais' => $data['pais'],
-            'email' => $data['email'],
-            ]);
+//         return User::create([
+//             'name' => $data['name'],
+//             'password' => bcrypt($data['password']),
+//             'lastname' => $data['lastname'],
+//             'sex' => $data['sex'],
+//             'etnia' => $data['etnia'],
+//             'cidade' => $data['cidade'],
+//             'uf' => $data['uf'],
+//             'pais' => $data['pais'],
+//             'email' => $data['email'],
+//             ]);
     }
     /**
      * Display the specified resource.
@@ -98,21 +99,23 @@ class UserController extends Controller
 		$userUpdate = User::find($id);
 		$user = Auth::user();
 		//dono e admin somente podem alterar
-		if ($user->id == $userUpdate->id || $user->role_id == '1'){
+		if ($user->role_id == '1'){
 			$this->validate(request(), [
 				'name' => 'required|string|max:255',
-				'email' => 'required|string|max:255',
+				'email' => 'required|email|max:255',
+				'role_id' => 'required',
 		]);
 		$userUpdate->name = $request->get('name');
 		$userUpdate->email = $request->get('email');
+		$userUpdate->role_id = $request->get('role_id');
 		$userUpdate->save();
 		return response()->json([
-            'success' => 'Usuario updated successfully!'
+            'success' => 'Usuario atualizado com sucesso.'
         ], 200);
 		// return redirect('users.index')->with('success','Usuario atualizado');
 	}else{
 		return response()->json([
-            'error' => 'Usuario NOT updated successfully!'
+            'error' => 'Acesso negado.'
         ], 200);
 		// return redirect('users.index')->with('error','Nao foi possivel atualizar o usuario.');
 	}
@@ -145,11 +148,19 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
-        $userDel = User::find($id);
+    $userDel = User::find($id);
+		$user = Auth::user();
+		//dono e admin somente podem alterar
+			if ($user->role_id == '1'){
        $userDel->delete();
 			 return response()->json([
-	             'success' => 'Usuario updated successfully!'
+	             'success' => 'Usuario deletado com sucesso!'
 	         ], 200);
       //  return redirect('users.index')->with('success','Usuario deletado');
-    }
+    }else{
+		return response()->json([
+            'error' => 'Acesso negado.'
+        ], 200);
+			}
+		}
 }
