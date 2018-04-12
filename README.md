@@ -12,3 +12,10 @@ $ sudo npm install vue-bootstrap-datetimepicker --save
 Dependencia para fazer "parse" de data dentro do vue: Moment.js
 Para fazer fora: carbon
 Pros inputs: vue-datetimepicker
+
+Comandos do git:
+Pra apontar pro repositorio "novo" no GitHub
+$ git remote add origin https://github.com/cacoma/novo.git
+
+Para baixar do remoto "origini" pra branch local "master"
+$ git pull origin master
